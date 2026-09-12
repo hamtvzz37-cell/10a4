@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản Lý Học Sinh</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+header {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    color: white;
+    padding: 22px;
+    text-align: center;
+}
+
+header h1 {
+    margin-bottom: 6px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* DASHBOARD */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: white;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.08);
+}
+
+.stat h3 {
+    color: #64748b;
+    font-size: 14px;
+}
+
+.stat p {
+    font-size: 28px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+/* BUTTON */
+
+button {
+    border: none;
+    border-radius: 8px;
+    padding: 9px 13px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.btn-primary {
+    background: #2563eb;
+    color: white;
+}
+
+.btn-success {
+    background: #16a34a;
+    color: white;
+}
+
+.btn-danger {
+    background: #dc2626;
+    color: white;
+}
+
+.btn-warning {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-gray {
+    background: #64748b;
+    color: white;
+}
+
+/* TOP BAR */
+
+.topbar {
+    background: white;
+    padding: 15px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+input, select, textarea {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.search {
+    flex: 1;
+    min-width: 200px;
+}
+
+/* TABLE */
+
+.table-container {
+    background: white;
+    border-radius: 14px;
+    overflow-x: auto;
+    box-shadow: 0 3px 10px rgba(0,0,0,.08);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 13px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+    background: #f8fafc;
+}
+
+.points {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.good {
+    color: #16a34a;
+}
+
+.bad {
+    color: #dc2626;
+}
+
+.role {
+    background: #e0e7ff;
+    color: #3730a3;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.status {
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.present {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.absent {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.late {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.5);
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: white;
+    width: 100%;
+    max-width: 550px;
+    border-radius: 16px;
+    padding: 25px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-box h2 {
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* ACTION */
+
+.actions {
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.history {
+    margin-top: 20px;
+}
+
+.history-item {
+    padding: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+@media(max-width: 800px) {
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    th:nth-child(5),
+    td:nth-child(5) {
+        display: none;
+    }
+}
+
+@media(max-width: 500px) {
+    .stats {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .container {
+        padding: 10px;
+    }
+
+    table {
+        font-size: 13px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🎓 QUẢN LÝ HỌC SINH</h1>
+    <p>Hệ thống quản lý điểm • điểm danh • chức vụ • vi phạm</p>
+</header>
+
+<div class="container">
+
+    <!-- THỐNG KÊ -->
+
+    <div class="stats">
+
+        <div class="stat">
+            <h3>Tổng học sinh</h3>
+            <p id="totalStudents">0</p>
+        </div>
+
+        <div class="stat">
+            <h3>Có mặt hôm nay</h3>
+            <p id="presentStudents">0</p>
+        </div>
+
+        <div class="stat">
+            <h3>Vắng hôm nay</h3>
+            <p id="absentStudents">0</p>
+        </div>
+
+        <div class="stat">
+            <h3>Điểm trung bình</h3>
+            <p id="averagePoints">0</p>
+        </div>
+
+    </div>
+
+    <!-- THANH CÔNG CỤ -->
+
+    <div class="topbar">
+
+        <input
+            id="search"
+            class="search"
+            placeholder="🔎 Tìm tên hoặc mã học sinh..."
+            oninput="renderStudents()"
+        >
+
+        <button class="btn-primary" onclick="openAddStudent()">
+            + Thêm học sinh
+        </button>
+
+        <button class="btn-gray" onclick="exportData()">
+            💾 Sao lưu
+        </button>
+
+        <button class="btn-warning" onclick="resetData()">
+            🗑 Xóa dữ liệu
+        </button>
+
+    </div>
+
+    <!-- BẢNG -->
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Mã</th>
+                    <th>Học sinh</th>
+                    <th>Chức vụ</th>
+                    <th>Điểm</th>
+                    <th>Điểm danh</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody id="studentTable"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL THÊM HỌC SINH -->
+
+<div class="modal" id="studentModal">
+
+    <div class="modal-box">
+
+        <h2>👨‍🎓 Thêm học sinh</h2>
+
+        <div class="form-group">
+            <label>Họ và tên</label>
+            <input id="studentName" placeholder="Nguyễn Văn A">
+        </div>
+
+        <div class="form-group">
+            <label>Mã học sinh</label>
+            <input id="studentCode" placeholder="HS001">
+        </div>
+
+        <div class="form-group">
+            <label>Chức vụ</label>
+
+            <select id="studentRole">
+                <option>Thành viên</option>
+                <option>Lớp trưởng</option>
+                <option>Lớp phó</option>
+                <option>Tổ trưởng</option>
+                <option>Tổ phó</option>
+                <option>Bí thư</option>
+                <option>Phó bí thư</option>
+            </select>
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button class="btn-gray" onclick="closeModal()">
+                Hủy
+            </button>
+
+            <button class="btn-primary" onclick="addStudent()">
+                Thêm
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL ĐIỂM -->
+
+<div class="modal" id="pointModal">
+
+    <div class="modal-box">
+
+        <h2>⭐ Điều chỉnh điểm</h2>
+
+        <input type="hidden" id="pointStudentId">
+
+        <div class="form-group">
+
+            <label>Số điểm</label>
+
+            <input
+                id="pointValue"
+                type="number"
+                placeholder="Ví dụ: 10"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Lý do</label>
+
+            <textarea
+                id="pointReason"
+                placeholder="Ví dụ: Giúp đỡ bạn trong học tập..."
+            ></textarea>
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button class="btn-gray" onclick="closeModal()">
+                Hủy
+            </button>
+
+            <button
+                class="btn-success"
+                onclick="changePoint(1)"
+            >
+                ➕ Cộng điểm
+            </button>
+
+            <button
+                class="btn-danger"
+                onclick="changePoint(-1)"
+            >
+                ➖ Trừ điểm
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL VI PHẠM -->
+
+<div class="modal" id="offenseModal">
+
+    <div class="modal-box">
+
+        <h2>⚠️ Ghi vi phạm</h2>
+
+        <input type="hidden" id="offenseStudentId">
+
+        <div class="form-group">
+
+            <label>Nội dung vi phạm</label>
+
+            <textarea
+                id="offenseText"
+                placeholder="Ví dụ: Đi học muộn..."
+            ></textarea>
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Trừ bao nhiêu điểm?</label>
+
+            <input
+                id="offensePoints"
+                type="number"
+                value="5"
+            >
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button class="btn-gray" onclick="closeModal()">
+                Hủy
+            </button>
+
+            <button class="btn-danger" onclick="addOffense()">
+                Ghi vi phạm
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL CHI TIẾT -->
+
+<div class="modal" id="detailModal">
+
+    <div class="modal-box">
+
+        <h2 id="detailTitle">Chi tiết học sinh</h2>
+
+        <div id="detailContent"></div>
+
+        <div class="modal-buttons">
+
+            <button class="btn-gray" onclick="closeModal()">
+                Đóng
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================
+   DỮ LIỆU
+========================= */
+
+let students =
+    JSON.parse(localStorage.getItem("students")) || [];
+
+
+/* =========================
+   LƯU DỮ LIỆU
+========================= */
+
+function saveData() {
+
+    localStorage.setItem(
+        "students",
+        JSON.stringify(students)
+    );
+
+}
+
+
+/* =========================
+   THÊM HỌC SINH
+========================= */
+
+function openAddStudent() {
+
+    document.getElementById("studentModal").style.display = "flex";
+
+}
+
+
+function addStudent() {
+
+    const name =
+        document.getElementById("studentName").value.trim();
+
+    const code =
+        document.getElementById("studentCode").value.trim();
+
+    const role =
+        document.getElementById("studentRole").value;
+
+    if (!name || !code) {
+
+        alert("Vui lòng nhập đầy đủ thông tin!");
+
+        return;
+    }
+
+    if (
+        students.some(
+            student => student.code.toLowerCase() === code.toLowerCase()
+        )
+    ) {
+
+        alert("Mã học sinh đã tồn tại!");
+
+        return;
+    }
+
+    const student = {
+
+        id: Date.now(),
+
+        name: name,
+
+        code: code,
+
+        role: role,
+
+        points: 200,
+
+        attendance: {},
+
+        offenses: [],
+
+        history: []
+
+    };
+
+    students.push(student);
+
+    saveData();
+
+    closeModal();
+
+    document.getElementById("studentName").value = "";
+
+    document.getElementById("studentCode").value = "";
+
+    renderStudents();
+
+}
+
+
+/* =========================
+   HIỂN THỊ HỌC SINH
+========================= */
+
+function renderStudents() {
+
+    const table =
+        document.getElementById("studentTable");
+
+    const search =
+        document.getElementById("search").value.toLowerCase();
+
+    table.innerHTML = "";
+
+    const filtered =
+        students.filter(student =>
+            student.name.toLowerCase().includes(search) ||
+            student.code.toLowerCase().includes(search)
+        );
+
+    filtered.forEach(student => {
+
+        const today =
+            new Date().toISOString().split("T")[0];
+
+        const status =
+            student.attendance[today] || "Chưa điểm danh";
+
+        let statusClass = "";
+
+        if (status === "Có mặt")
+            statusClass = "present";
+
+        if (status === "Vắng")
+            statusClass = "absent";
+
+        if (status === "Đi muộn")
+            statusClass = "late";
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+
+            <td>${student.code}</td>
+
+            <td>
+                <strong>${student.name}</strong>
+            </td>
+
+            <td>
+                <span class="role">
+                    ${student.role}
+                </span>
+            </td>
+
+            <td>
+
+                <span class="points ${
+                    student.points >= 100
+                    ? "good"
+                    : "bad"
+                }">
+
+                    ${student.points}
+
+                </span>
+
+            </td>
+
+            <td>
+
+                <span class="status ${statusClass}">
+                    ${status}
+                </span>
+
+            </td>
+
+            <td>
+
+                <div class="actions">
+
+                    <button
+                        class="btn-success"
+                        onclick="openPoint(${student.id})"
+                    >
+                        +/− Điểm
+                    </button>
+
+                    <button
+                        class="btn-warning"
+                        onclick="openOffense(${student.id})"
+                    >
+                        ⚠️ Vi phạm
+                    </button>
+
+                    <button
+                        class="btn-primary"
+                        onclick="attendance(${student.id})"
+                    >
+                        📋 Điểm danh
+                    </button>
+
+                    <button
+                        class="btn-gray"
+                        onclick="showDetail(${student.id})"
+                    >
+                        👁
+                    </button>
+
+                    <button
+                        class="btn-danger"
+                        onclick="deleteStudent(${student.id})"
+                    >
+                        Xóa
+                    </button>
+
+                </div>
+
+            </td>
+
+        `;
+
+        table.appendChild(row);
+
+    });
+
+    updateStats();
+
+}
+
+
+/* =========================
+   THỐNG KÊ
+========================= */
+
+function updateStats() {
+
+    document.getElementById("totalStudents")
+        .textContent = students.length;
+
+    const today =
+        new Date().toISOString().split("T")[0];
+
+    let present = 0;
+    let absent = 0;
+
+    students.forEach(student => {
+
+        if (student.attendance[today] === "Có mặt")
+            present++;
+
+        if (student.attendance[today] === "Vắng")
+            absent++;
+
+    });
+
+    document.getElementById("presentStudents")
+        .textContent = present;
+
+    document.getElementById("absentStudents")
+        .textContent = absent;
+
+    if (students.length === 0) {
+
+        document.getElementById("averagePoints")
+            .textContent = 0;
+
+        return;
+    }
+
+    const total =
+        students.reduce(
+            (sum, student) => sum + student.points,
+            0
+        );
+
+    document.getElementById("averagePoints")
+        .textContent =
+        Math.round(total / students.length);
+
+}
+
+
+/* =========================
+   ĐIỂM
+========================= */
+
+function openPoint(id) {
+
+    document.getElementById("pointStudentId").value = id;
+
+    document.getElementById("pointModal").style.display = "flex";
+
+}
+
+
+function changePoint(type) {
+
+    const id =
+        Number(
+            document.getElementById("pointStudentId").value
+        );
+
+    const value =
+        Number(
+            document.getElementById("pointValue").value
+        );
+
+    const reason =
+        document.getElementById("pointReason").value.trim();
+
+    if (!value || value <= 0) {
+
+        alert("Nhập số điểm hợp lệ!");
+
+        return;
+    }
+
+    const student =
+        students.find(student => student.id === id);
+
+    if (!student) return;
+
+    const oldPoint = student.points;
+
+    student.points += value * type;
+
+    /*
+       Không cho điểm âm
+    */
+
+    if (student.points < 0)
+        student.points = 0;
+
+    student.history.unshift({
+
+        date: new Date().toLocaleString("vi-VN"),
+
+        type: type === 1
+            ? "Cộng điểm"
+            : "Trừ điểm",
+
+        value: value,
+
+        reason: reason || "Không ghi lý do",
+
+        oldPoint: oldPoint,
+
+        newPoint: student.points
+
+    });
+
+    saveData();
+
+    closeModal();
+
+    document.getElementById("pointValue").value = "";
+
+    document.getElementById("pointReason").value = "";
+
+    renderStudents();
+
+}
+
+
+/* =========================
+   VI PHẠM
+========================= */
+
+function openOffense(id) {
+
+    document.getElementById("offenseStudentId").value = id;
+
+    document.getElementById("offenseModal").style.display = "flex";
+
+}
+
+
+function addOffense() {
+
+    const id =
+        Number(
+            document.getElementById("offenseStudentId").value
+        );
+
+    const text =
+        document.getElementById("offenseText").value.trim();
+
+    const points =
+        Number(
+            document.getElementById("offensePoints").value
+        );
+
+    if (!text) {
+
+        alert("Hãy nhập nội dung vi phạm!");
+
+        return;
+    }
+
+    const student =
+        students.find(student => student.id === id);
+
+    if (!student) return;
+
+    const oldPoint = student.points;
+
+    student.points -= points;
+
+    if (student.points < 0)
+        student.points = 0;
+
+    student.offenses.unshift({
+
+        date: new Date().toLocaleString("vi-VN"),
+
+        text: text,
+
+        points: points
+
+    });
+
+    student.history.unshift({
+
+        date: new Date().toLocaleString("vi-VN"),
+
+        type: "Vi phạm",
+
+        value: points,
+
+        reason: text,
+
+        oldPoint: oldPoint,
+
+        newPoint: student.points
+
+    });
+
+    saveData();
+
+    closeModal();
+
+    document.getElementById("offenseText").value = "";
+
+    document.getElementById("offensePoints").value = 5;
+
+    renderStudents();
+
+}
+
+
+/* =========================
+   ĐIỂM DANH
+========================= */
+
+function attendance(id) {
+
+    const student =
+        students.find(student => student.id === id);
+
+    if (!student) return;
+
+    const today =
+        new Date().toISOString().split("T")[0];
+
+    const choice =
+        prompt(
+            `Điểm danh ${student.name}\n\n` +
+            `1 = Có mặt\n` +
+            `2 = Vắng\n` +
+            `3 = Có phép\n` +
+            `4 = Đi muộn`
+        );
+
+    const statuses = {
+
+        "1": "Có mặt",
+
+        "2": "Vắng",
+
+        "3": "Có phép",
+
+        "4": "Đi muộn"
+
+    };
+
+    if (!statuses[choice]) return;
+
+    student.attendance[today] =
+        statuses[choice];
+
+    saveData();
+
+    renderStudents();
+
+}
+
+
+/* =========================
+   CHI TIẾT
+========================= */
+
+function showDetail(id) {
+
+    const student =
+        students.find(student => student.id === id);
+
+    if (!student) return;
+
+    document.getElementById("detailTitle")
+        .textContent =
+        "👨‍🎓 " + student.name;
+
+    let html = `
+
+        <p>
+            <strong>Mã học sinh:</strong>
+            ${student.code}
+        </p>
+
+        <p style="margin-top:10px">
+            <strong>Chức vụ:</strong>
+            ${student.role}
+        </p>
+
+        <p style="margin-top:10px">
+            <strong>Điểm hiện tại:</strong>
+            <span class="${
+                student.points >= 100
+                ? "good"
+                : "bad"
+            }">
+                ${student.points}
+            </span>
+        </p>
+
+        <div class="history">
+
+            <h3>⚠️ Vi phạm</h3>
+
+    `;
+
+    if (student.offenses.length === 0) {
+
+        html +=
+            "<p style='margin-top:10px'>Không có vi phạm.</p>";
+
+    } else {
+
+        student.offenses.forEach(offense => {
+
+            html += `
+
+                <div class="history-item">
+
+                    <strong>${offense.text}</strong>
+
+                    <br>
+
+                    <small>
+                        ${offense.date}
+                        • Trừ ${offense.points} điểm
+                    </small>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+    html += `
+
+        <h3 style="margin-top:20px">
+            📜 Lịch sử điểm
+        </h3>
+
+    `;
+
+    if (student.history.length === 0) {
+
+        html +=
+            "<p style='margin-top:10px'>Chưa có lịch sử.</p>";
+
+    } else {
+
+        student.history.slice(0, 20).forEach(item => {
+
+            html += `
+
+                <div class="history-item">
+
+                    <strong>
+                        ${item.type}
+                    </strong>
+
+                    : ${item.value} điểm
+
+                    <br>
+
+                    <small>
+                        ${item.date}
+                        <br>
+                        ${item.reason}
+                        <br>
+                        ${item.oldPoint}
+                        → ${item.newPoint} điểm
+                    </small>
+
+                </div>
+
+            `;
+
+        });
+
+    }
+
+    html += "</div>";
+
+    document.getElementById("detailContent")
+        .innerHTML = html;
+
+    document.getElementById("detailModal")
+        .style.display = "flex";
+
+}
+
+
+/* =========================
+   XÓA HỌC SINH
+========================= */
+
+function deleteStudent(id) {
+
+    const student =
+        students.find(student => student.id === id);
+
+    if (!student) return;
+
+    const confirmDelete =
+        confirm(
+            `Bạn có chắc muốn xóa ${student.name}?`
+        );
+
+    if (!confirmDelete) return;
+
+    students =
+        students.filter(student => student.id !== id);
+
+    saveData();
+
+    renderStudents();
+
+}
+
+
+/* =========================
+   ĐÓNG MODAL
+========================= */
+
+function closeModal() {
+
+    document
+        .querySelectorAll(".modal")
+        .forEach(modal => {
+
+            modal.style.display = "none";
+
+        });
+
+}
+
+
+/* =========================
+   SAO LƯU
+========================= */
+
+function exportData() {
+
+    const data =
+        JSON.stringify(students, null, 2);
+
+    const blob =
+        new Blob(
+            [data],
+            { type: "application/json" }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        "du-lieu-hoc-sinh.json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =========================
+   XÓA TOÀN BỘ
+========================= */
+
+function resetData() {
+
+    const ok =
+        confirm(
+            "CẢNH BÁO!\n\n" +
+            "Toàn bộ dữ liệu học sinh sẽ bị xóa.\n" +
+            "Bạn có chắc chắn không?"
+        );
+
+    if (!ok) return;
+
+    localStorage.removeItem("students");
+
+    students = [];
+
+    renderStudents();
+
+}
+
+
+/* =========================
+   KHỞI ĐỘNG
+========================= */
+
+renderStudents();
+
+</script>
+
+</body>
+</html>
